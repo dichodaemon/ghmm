@@ -1,0 +1,4 @@
+This project requires SimpleCMake. If it is not installed at the default path,
+you should invoke CMake as follows:
+
+cmake <ROOT_DIR> -DCMAKE_MODULE_PATH:PATH=<SIMPLE_CMAKE_DIR>
