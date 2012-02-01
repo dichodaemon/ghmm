@@ -8,7 +8,7 @@
 
 
 struct NodeData {
-  Eigen::Matrix<float, 2, 1> centroid;
+  Eigen::Matrix<float, 4, 1> centroid;
 };
 
 struct EdgeData {
@@ -22,12 +22,14 @@ SUITE( ITM ) {
 
   TEST( Defaults )
   {
-    typedef ghmm::itm_eigen_traits< Graph, float, 2> Traits;
+    typedef ghmm::itm_eigen_traits< Graph, float, 4> Traits;
 
     Graph g;
     Traits::matrix_type sigma;
-    sigma << 1.0, 0.0, 
-             0.0, 1.0;
+    sigma << 1.0, 0.0, 0.0, 0.0, 
+             0.0, 1.0, 0.0, 0.0,
+             0.0, 0.0, 4.0, 0.0,
+             0.0, 0.0, 0.0, 4.0;
     ghmm::ITM< Traits > itm( 
       g, 
       Traits::distance_type( sigma ), 
@@ -35,10 +37,9 @@ SUITE( ITM ) {
     );
 
     for ( int i = 0; i < 1000; ++i ) {
-      std::cout << i << std::endl;
       for ( int j = 0; j < 100; ++j ) {
         Traits::observation_type o;
-        o << j / 10.0, i / 10.0;
+        o << j / 10.0, i / 10.0, i / 100.0, j / 100.0;
         itm( o );
       }
     }

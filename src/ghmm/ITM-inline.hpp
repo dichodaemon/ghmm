@@ -89,7 +89,8 @@ ITM<ITM_TRAITS>::handleDeletions( node_type best, node_type second )
   observation_type bestCentroid = graph_[best].centroid;
   observation_type secondCentroid = graph_[second].centroid;
 
-  // Don't know of other way to avoid iterator invalidation
+  // Don't know of other way to avoid iterator invalidation than to do this
+  // twice.
   out_edge_iterator iChild;
   out_edge_iterator eChild;
   typename std::list<node_type> erase;

@@ -14,7 +14,6 @@ template< typename ITM_TRAITS >
 class ITM
 {
 public:
-  typedef ITM_TRAITS traits_class;
   typedef typename ITM_TRAITS::observation_type observation_type;
   typedef typename ITM_TRAITS::graph_type graph_type;
   typedef typename ITM_TRAITS::value_type value_type;
