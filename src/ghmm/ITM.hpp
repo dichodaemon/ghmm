@@ -2,6 +2,8 @@
 #define GHMM_ITM_H_
 
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <algorithm>
 #include <list>
 
@@ -28,7 +30,6 @@ public:
     graph_type & graph, 
     distance_type distance, 
     value_type insertionDistance, 
-    value_type deletionDistance, 
     value_type epsilon 
   );
   void operator()( const observation_type & o );
@@ -36,7 +37,6 @@ private:
   graph_type &  graph_;
   distance_type distance_;
   value_type    insertionDistance_;
-  value_type    deletionDistance_;
   value_type    epsilon_;
   node_type     lastInserted_;
   node_type     none_;

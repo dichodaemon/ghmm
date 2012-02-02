@@ -2,11 +2,9 @@
 #define GHMM_ITM_EIGEN_TRAITS_H_
 
 
+#include "Mahalanobis.hpp"
 #include <eigen3/Eigen/Core>
 #include <boost/graph/graph_traits.hpp>
-
-
-#include "Mahalanobis.hpp"
 
 
 namespace ghmm

@@ -2,6 +2,8 @@
 #define GHMM_GHMM_H_
 
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/copy.hpp>
 #include "ITM.hpp"
 
 
@@ -17,19 +19,20 @@ public:
   typedef typename GHMM_TRAITS::observation_type observation_type;
   typedef typename GHMM_TRAITS::value_type value_type;
   typedef typename GHMM_TRAITS::graph_type graph_type;
-  typedef typename GHMM_TRAITS::full_distance_type full_distance_type;
   typedef typename GHMM_TRAITS::distance_type distance_type;
+  typedef typename GHMM_TRAITS::gaussian_type gaussian_type;
   typedef typename GHMM_TRAITS::full_matrix_type full_matrix_type;
   typedef typename GHMM_TRAITS::matrix_type matrix_type;
   typedef typename GHMM_TRAITS::itm_type itm_type;
   typedef typename GHMM_TRAITS::itm_type::node_type node_type;
-  //typedef typename GHMM_TRAITS::
+  typedef typename itm_type::node_iterator node_iterator;
+  typedef typename itm_type::out_edge_iterator out_edge_iterator;
+  typedef typename itm_type::in_edge_iterator in_edge_iterator;
 
   GHMM( 
     full_matrix_type fullSigma, 
     matrix_type sigma, 
     value_type insertionDistance, 
-    value_type deletionDistance, 
     value_type epsilon,
     value_type statePrior,
     value_type transitionPrior
@@ -41,17 +44,18 @@ public:
 
   template < typename IT >
   void learn( IT begin, IT end );
-private:
-  std::vector< value_type > value_array;
-  matrix_type sigma_;
-  value_type  statePrior_;
-  value_type  transitionPrior_;
-  graph_type  graph_;
-  itm_type    itm_;
-  uint32_t    trajectoryCount_;
 
-  value_array alpha_;
-  value_array beta_;
+  graph_type & graph();
+private:
+  typedef typename std::vector< value_type > value_array;
+  matrix_type   sigma_;
+  value_type    statePrior_;
+  value_type    transitionPrior_;
+  graph_type    graph_;
+  itm_type      itm_;
+  gaussian_type gaussian_;
+  uint32_t      trajectoryCount_;
+
   value_array factors_;
 
   void normalize();

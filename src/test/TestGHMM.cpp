@@ -1,10 +1,12 @@
+#include <ghmm/GHMM.hpp>
+#include <ghmm/ITM.hpp>
+#include <ghmm/itm_eigen_traits.hpp>
+#include <ghmm/Mahalanobis.hpp>
+#include <ghmm/Gaussian.hpp>
 #include <unittest++/UnitTest++.h>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <boost/graph/adjacency_list.hpp>
-#include <ghmm/GHMM.hpp>
-#include <ghmm/ITM.hpp>
-#include <ghmm/itm_eigen_traits.hpp>
 #include <iostream>
 
 using namespace boost;
@@ -24,6 +26,9 @@ public:
     full_observation_type centroid;
     value_type oldPrior;
     value_type prior;
+    value_type belief;
+    std::vector<value_type> alpha;
+    std::vector<value_type> beta;
   };
 
   struct edge_data_type {
@@ -46,11 +51,15 @@ public:
   typedef typename ghmm::Mahalanobis<
       value_type, 
       full_matrix_type, 
-      full_observation_type > full_distance_type;
-  typedef typename ghmm::Mahalanobis<
+      full_observation_type > distance_type;
+  typedef typename ghmm::Gaussian<
       value_type, 
       matrix_type, 
-      observation_type > distance_type;
+      observation_type > gaussian_type;
+  static observation_type toObservation( const full_observation_type & o )
+  {
+    return o.block( 0, 0, 1, N );
+  }
 };
 
 SUITE( GHMM ) {
@@ -72,11 +81,11 @@ SUITE( GHMM ) {
     ghmm::GHMM< Traits > ghmm( 
       fullSigma, 
       sigma,
-      1, 1.5, 0.01,
+      1, 0.01,
       0.001, 0.001
     );
 
-    for ( int i = 0; i < 1000; ++i ) {
+    for ( int i = 0; i < 100; ++i ) {
       std::vector< Traits::full_observation_type> trajectory;
       for ( int j = 0; j < 100; ++j ) {
         Traits::full_observation_type o;
@@ -84,6 +93,47 @@ SUITE( GHMM ) {
         trajectory.push_back( o );
       }
       ghmm.learn( trajectory.begin(), trajectory.end() );
+    }
+  }
+
+  TEST( Track )
+  {
+    typedef GHMMTraits<float, 2, 4> Traits; 
+    Traits::matrix_type sigma;
+    sigma << 1.0, 0.0, 
+           0.0, 1.0;
+    Traits::full_matrix_type fullSigma;
+    fullSigma << 1.0, 0.0, 0.0, 0.0,
+                 0.0, 1.0, 0.0, 0.0,
+                 0.0, 0.0, 4.0, 0.0,
+                 0.0, 0.0, 0.0, 4.0;
+    ghmm::GHMM< Traits > ghmm( 
+      fullSigma, 
+      sigma,
+      1, 0.01,
+      0.001, 0.001
+    );
+
+    for ( int i = 0; i < 1; ++i ) {
+      std::vector< Traits::full_observation_type> trajectory;
+      for ( int j = 0; j < 100; ++j ) {
+        Traits::full_observation_type o;
+        o << j / 10.0, i / 10.0, i / 100.0, j / 100.0;
+        trajectory.push_back( o );
+      }
+      ghmm.learn( trajectory.begin(), trajectory.end() );
+    }
+
+    Traits::graph_type g2;
+    ghmm.initTrack( g2 );
+    typename ghmm::GHMM< Traits >::node_iterator n1;
+    typename ghmm::GHMM< Traits >::node_iterator e1;
+    typename ghmm::GHMM< Traits >::node_iterator n2;
+    typename ghmm::GHMM< Traits >::node_iterator e2;
+    boost::tie( n1, e1 ) = boost::vertices( ghmm.graph() );
+    boost::tie( n2, e2 ) = boost::vertices( g2 );
+    for ( ; n1 != e1; ++n1, ++n2 ) {
+      std::cerr << ghmm.graph()[*n1].centroid << ", " << g2[*n2].centroid << std::endl;
     }
   }
 }

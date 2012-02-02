@@ -1,14 +1,14 @@
+#include <ghmm/ITM.hpp>
+#include <ghmm/itm_eigen_traits.hpp>
 #include <unittest++/UnitTest++.h>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <boost/graph/adjacency_list.hpp>
-#include <ghmm/ITM.hpp>
-#include <ghmm/itm_eigen_traits.hpp>
 #include <iostream>
 
 
 struct NodeData {
-  Eigen::Matrix<float, 4, 1> centroid;
+  Eigen::Matrix<float, 1, 4> centroid;
 };
 
 struct EdgeData {
@@ -33,10 +33,10 @@ SUITE( ITM ) {
     ghmm::ITM< Traits > itm( 
       g, 
       Traits::distance_type( sigma ), 
-      1, 1.5, 0.01 
+      1, 0.01 
     );
 
-    for ( int i = 0; i < 1000; ++i ) {
+    for ( int i = 0; i < 100; ++i ) {
       for ( int j = 0; j < 100; ++j ) {
         Traits::observation_type o;
         o << j / 10.0, i / 10.0, i / 100.0, j / 100.0;
