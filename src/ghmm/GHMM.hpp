@@ -2,19 +2,19 @@
 #define GHMM_GHMM_H_
 
 
-#include <boost/graph/adjacency_list.hpp>
+#include "ghmm_default_traits.hpp"
 #include <boost/graph/copy.hpp>
-#include "ITM.hpp"
 
 
 namespace ghmm
 {
 
 
-template < typename GHMM_TRAITS >
+template < typename T, int N, int FULL_N,  typename GHMM_TRAITS = GHMMDefaultTraits< T, N, FULL_N > >
 class GHMM
 {
 public:
+  typedef GHMM_TRAITS traits_type;
   typedef typename GHMM_TRAITS::full_observation_type full_observation_type;
   typedef typename GHMM_TRAITS::observation_type observation_type;
   typedef typename GHMM_TRAITS::value_type value_type;
@@ -38,9 +38,14 @@ public:
     value_type transitionPrior
   );
 
-  void update( graph_type & graph, const observation_type & observation ) const;
-  void predict( graph_type & graph, uint8_t horizon ) const;
   void initTrack( graph_type & graph ) const;
+  void update( graph_type & graph, const observation_type & o ) const;
+  void predict( graph_type & graph, uint8_t horizon ) const;
+  value_type observationPdf( 
+    const graph_type & graph, 
+    uint32_t t, 
+    const observation_type & o 
+  ) const;
 
   template < typename IT >
   void learn( IT begin, IT end );
@@ -72,7 +77,7 @@ private:
   value_type observationProbability( 
     const observation_type & o, 
     const node_type & n 
-  );
+  ) const;
 };
 
 

@@ -15,7 +15,7 @@ public:
   typedef T value_type;
 
   Gaussian( matrix_type sigma );
-  value_type operator()( const vector_type & v1, const vector_type & v2 );
+  value_type operator()( const vector_type & v1, const vector_type & v2 ) const;
   
 private:
   matrix_type sigmaInverse_;
