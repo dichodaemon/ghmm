@@ -24,14 +24,15 @@ public:
   typedef typename Eigen::Matrix<value_type, 1, N> observation_type;
   typedef typename Eigen::Matrix<value_type, FULL_N, FULL_N> full_matrix_type;
   typedef typename Eigen::Matrix<value_type, N, N> matrix_type;
+  typedef typename std::vector< value_type > estimations_type;
 
   struct node_data_type {
     node_data_type() : prior( 0 ){};
     full_observation_type centroid;
     value_type oldPrior;
     value_type prior;
+    estimations_type estimations;
     value_type belief;
-    value_type oldBelief;
     std::vector<value_type> alpha;
     std::vector<value_type> beta;
   };

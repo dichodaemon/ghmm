@@ -28,6 +28,7 @@ public:
   typedef typename itm_type::node_iterator node_iterator;
   typedef typename itm_type::out_edge_iterator out_edge_iterator;
   typedef typename itm_type::in_edge_iterator in_edge_iterator;
+  typedef typename GHMM_TRAITS::estimations_type estimations_type;
 
   GHMM( 
     full_matrix_type fullSigma, 

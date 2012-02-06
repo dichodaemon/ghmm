@@ -73,7 +73,8 @@ SUITE( GHMM ) {
       GHMMType::observation_type o;
       o << i / 10.0, 0.0;
       ghmm.update( g2, o );
-      ghmm.observationPdf( g2, 0, o );
+      ghmm.predict( g2, 20 );
+      ghmm.observationPdf( g2, 20, o );
     }
   }
 }

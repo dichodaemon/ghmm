@@ -58,7 +58,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::normalize()
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph_ );
         n != nodeEnd; ++n
   ) {
-    //std::cerr << "Node: " << graph_[*n].centroid << std::endl;
     // Add self-edges
     boost::add_edge( *n, *n, graph_ );
     if ( graph_[*n].prior < statePrior_ ) {
@@ -85,10 +84,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::normalize()
     ) {
       graph_[*child].value /= transitionSum;
       graph_[*child].oldValue = graph_[*child].value;
-      //std::cerr << graph_[*n].centroid << "-"
-                //<< graph_[boost::target( *child, graph_)].centroid << ": "
-                //<< graph_[*child].value
-                //<< std::endl;
     }
   }
 
@@ -121,9 +116,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeForward( IT begin, IT end )
     if ( ! tmp > 1E-40 ) {
       tmp = 1E-40;
     }
-    //std::cerr << "Prior: " << graph_[*n].prior 
-              //<< ", ObsP: " << observationProbability( *begin, *n )
-              //<< std::endl;
     graph_[*n].alpha.resize( size );
     graph_[*n].alpha[0] = tmp;
     total += tmp;
@@ -158,12 +150,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeForward( IT begin, IT end )
         value_type tmp =   graph_[parent].alpha[t - 1] 
                          * graph_[*parentEdge].value 
                          * observationProbability( *o, *n );
-        //std::cerr << n1Info.centroid << "-"
-                  //<< graph_[parent].centroid << ": "
-                  //<< graph_[parent].alpha[t - 1] << ", " 
-                  //<< graph_[*parentEdge].value << ", "
-                  //<< observationProbability( *o, *n )
-                  //<< std::endl;
         n1Info.alpha[t] += tmp;
       }
       if ( n1Info.alpha[t] < 1E-40 ) {
@@ -220,15 +206,10 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeBackwards( IT begin, IT end )
                 * observationProbability( *o, n2 ) 
                 * graph_[n2].beta[t + 1]
                 / factors_[t];
-        //std::cerr << graph_[*childEdge].value << ", "
-                  //<< observationProbability( *o, n2 ) << ", "
-                  //<< graph_[n2].beta[t + 1]
-                  //<< std::endl;
       }
       if ( ! beta > 1E-40 ) {
         beta = 1E-40;
       }
-      //assert( beta > 0 );
     }
   }
 }
@@ -253,10 +234,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     if ( ! tmp > 1E-40 ) {
       tmp = 1E-40;
     }
-    //std::cerr << n1Info.alpha[0] << ", "
-              //<< n1Info.beta[0]  << ", "
-              //<< std::endl;
-    //assert( tmp > 0 );
     n1Info.prior = tmp;
     totalPrior += tmp;
   }
@@ -280,13 +257,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
                * edgeInfo.oldValue
                * observationProbability( *o, n2 ) 
                * n2Info.beta[t];
-        //std::cerr << n1Info.alpha[t - 1] << ", "
-                  //<< edgeInfo.oldValue << ", "
-                  //<< observationProbability( *o, n2 ) << ", "
-                  //<< n2Info.beta[t]
-                  //<< std::endl;
       }
-      //assert( tmp > 0 );
       if ( tmp < 1E-40 ) {
         tmp = 1E-40;
       }
@@ -332,9 +303,9 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     ) {
       graph_[*childEdge].value /= tmp;
     }
-      n1Info.prior =   (   n1Info.oldPrior * ( trajectoryCount_ - 1) 
-                         + n1Info.prior ) 
-                     / trajectoryCount_;
+    n1Info.prior =   (   n1Info.oldPrior * ( trajectoryCount_ - 1) 
+                       + n1Info.prior ) 
+                   / trajectoryCount_;
   }
 }
 
@@ -365,7 +336,8 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::update(
         n != nodeEnd; ++n
   ) {
     typename GHMM_TRAITS::node_data_type & n1 = graph[*n];
-    n1.belief = 0;
+    n1.estimations.resize( 1 );
+    n1.estimations[0] = 0;
 
     typename itm_type::in_edge_iterator parentEdge;
     typename itm_type::in_edge_iterator parentEdgeEnd;
@@ -374,18 +346,18 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::update(
           parentEdge != parentEdgeEnd; ++parentEdge
     ) {
       node_type parent = boost::source( *parentEdge, graph );
-      assert( graph[parent].oldBelief == graph[parent].oldBelief );
+      assert( graph[parent].belief == graph[parent].belief );
       assert( graph[*parentEdge].value == graph[*parentEdge].value );
       assert( observationProbability( o, *n ) == observationProbability( o, *n ) );
-      value_type tmp =   graph[parent].oldBelief 
+      value_type tmp =   graph[parent].belief 
                        * graph[*parentEdge].value 
                        * observationProbability( o, *n );
-      n1.belief += tmp;
+      n1.estimations[0] += tmp;
     }
-    if ( n1.belief < 1E-40 ) {
-      n1.belief = 1E-40;
+    if ( n1.estimations[0] < 1E-40 ) {
+      n1.estimations[0] = 1E-40;
     }
-    total += n1.belief;
+    total += n1.estimations[0];
   }
 
 
@@ -395,8 +367,8 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::update(
     assert( total == total );
     assert( total > 0 );
     typename GHMM_TRAITS::node_data_type & n1 = graph[*n];
-    n1.belief /= total;
-    n1.oldBelief = n1.belief;
+    n1.estimations[0] /= total;
+    n1.belief = n1.estimations[0];
   }
 }
 
@@ -404,6 +376,36 @@ template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
 void
 GHMM<T, N, FULL_N, GHMM_TRAITS>::predict( graph_type & graph, uint8_t horizon ) const
 {
+  typename itm_type::node_iterator n;
+  typename itm_type::node_iterator nodeEnd;
+
+  for ( boost::tie( n, nodeEnd ) = boost::vertices( graph );
+        n != nodeEnd; ++n
+  ) {
+    typename GHMM_TRAITS::node_data_type & n1 = graph[*n];
+    n1.estimations.resize( horizon + 1 );
+    n1.estimations[0] = n1.belief;
+  }
+
+  for ( uint32_t t = 1; t <= horizon; ++t ) {
+    for ( boost::tie( n, nodeEnd ) = boost::vertices( graph );
+          n != nodeEnd; ++n
+    ) {
+      typename GHMM_TRAITS::node_data_type & n1 = graph[*n];
+      n1.estimations[t] = 0;
+
+      typename itm_type::in_edge_iterator parentEdge;
+      typename itm_type::in_edge_iterator parentEdgeEnd;
+
+      for ( boost::tie( parentEdge, parentEdgeEnd ) = boost::in_edges( *n, graph ); 
+            parentEdge != parentEdgeEnd; ++parentEdge
+      ) {
+        node_type parent = boost::source( *parentEdge, graph );
+        n1.estimations[t] +=  graph[parent].estimations[t - 1]
+                            * graph[*parentEdge].value;
+      }
+    }
+  }
 }
 
 template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
@@ -418,8 +420,9 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::initTrack( graph_type & graph ) const
         n != nodeEnd; ++n
   ) {
     typename GHMM_TRAITS::node_data_type & n1 = graph[*n];
-    n1.oldBelief = n1.prior;
     n1.belief = n1.prior;
+    n1.estimations.reserve( 1 );
+    n1.estimations[0] = n1.prior;
   }
 }
 
@@ -438,20 +441,11 @@ typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph );
         n != nodeEnd; ++n
   ) {
-    if ( t == 0 ) {
-      result += graph[*n].belief * observationProbability( o, *n ) + 1E-40;
-      //result += 100 * observationProbability( o, *n ) + 1E-40;
-      beliefTotal += graph[*n].belief;
-    } else {
-    }
+    result += graph[*n].estimations[t] * observationProbability( o, *n ) + 1E-40;
+    beliefTotal += graph[*n].estimations[t];
   }
-  //if ( ! beliefTotal > 0 ) {
-    //return 1;
-  //}
   assert( result == result );
   assert( result  > 0 );
-  //std::cerr << "Result: " << result << std::endl;
-  //std::cerr << "Belief total: " << beliefTotal << std::endl;
   return result;
 }
 
