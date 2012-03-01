@@ -17,12 +17,15 @@ public:
   typedef GHMM_TRAITS traits_type;
   typedef typename GHMM_TRAITS::full_observation_type full_observation_type;
   typedef typename GHMM_TRAITS::observation_type observation_type;
+  typedef typename GHMM_TRAITS::goal_type goal_type;
   typedef typename GHMM_TRAITS::value_type value_type;
   typedef typename GHMM_TRAITS::graph_type graph_type;
   typedef typename GHMM_TRAITS::distance_type distance_type;
-  typedef typename GHMM_TRAITS::gaussian_type gaussian_type;
+  typedef typename GHMM_TRAITS::observation_gaussian_type observation_gaussian_type;
+  typedef typename GHMM_TRAITS::goal_gaussian_type goal_gaussian_type;
   typedef typename GHMM_TRAITS::full_matrix_type full_matrix_type;
-  typedef typename GHMM_TRAITS::matrix_type matrix_type;
+  typedef typename GHMM_TRAITS::observation_matrix_type observation_matrix_type;
+  typedef typename GHMM_TRAITS::goal_matrix_type goal_matrix_type;
   typedef typename GHMM_TRAITS::itm_type itm_type;
   typedef typename GHMM_TRAITS::itm_type::node_type node_type;
   typedef typename itm_type::node_iterator node_iterator;
@@ -32,7 +35,8 @@ public:
 
   GHMM( 
     full_matrix_type fullSigma, 
-    matrix_type sigma, 
+    observation_matrix_type observationSigma, 
+    goal_matrix_type goalSigma,
     value_type insertionDistance, 
     value_type epsilon,
     value_type statePrior,
@@ -48,19 +52,28 @@ public:
     const observation_type & o 
   ) const;
 
+  value_type goalPdf( 
+    const graph_type & graph, 
+    uint32_t t, 
+    const goal_type & g 
+  ) const;
+
   template < typename IT >
   void learn( IT begin, IT end );
 
   graph_type & graph();
 private:
   typedef typename std::vector< value_type > value_array;
-  matrix_type   sigma_;
-  value_type    statePrior_;
-  value_type    transitionPrior_;
-  graph_type    graph_;
-  itm_type      itm_;
-  gaussian_type gaussian_;
-  uint32_t      trajectoryCount_;
+
+  observation_matrix_type   observationSigma_;
+  goal_matrix_type          goalSigma_;
+  value_type                statePrior_;
+  value_type                transitionPrior_;
+  graph_type                graph_;
+  itm_type                  itm_;
+  observation_gaussian_type observationGaussian_;
+  goal_gaussian_type        goalGaussian_;
+  uint32_t                  trajectoryCount_;
 
   value_array factors_;
 
@@ -77,6 +90,11 @@ private:
 
   value_type observationProbability( 
     const observation_type & o, 
+    const node_type & n 
+  ) const;
+
+  value_type goalProbability( 
+    const goal_type & g, 
     const node_type & n 
   ) const;
 };

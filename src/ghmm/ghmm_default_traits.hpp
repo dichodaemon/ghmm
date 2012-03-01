@@ -22,8 +22,10 @@ public:
   typedef T value_type;
   typedef typename Eigen::Matrix<value_type, 1, FULL_N> full_observation_type;
   typedef typename Eigen::Matrix<value_type, 1, N> observation_type;
+  typedef typename Eigen::Matrix<value_type, 1, FULL_N - N> goal_type;
   typedef typename Eigen::Matrix<value_type, FULL_N, FULL_N> full_matrix_type;
-  typedef typename Eigen::Matrix<value_type, N, N> matrix_type;
+  typedef typename Eigen::Matrix<value_type, N, N> observation_matrix_type;
+  typedef typename Eigen::Matrix<value_type, FULL_N - N, FULL_N - N> goal_matrix_type;
   typedef typename std::vector< value_type > estimations_type;
 
   struct node_data_type {
@@ -60,11 +62,20 @@ public:
       full_observation_type > distance_type;
   typedef typename ghmm::Gaussian<
       value_type, 
-      matrix_type, 
-      observation_type > gaussian_type;
+      observation_matrix_type, 
+      observation_type > observation_gaussian_type;
+  typedef typename ghmm::Gaussian<
+      value_type, 
+      goal_matrix_type, 
+      goal_type > goal_gaussian_type;
   static observation_type toObservation( const full_observation_type & o )
   {
     return o.block( 0, 0, 1, N );
+  }
+
+  static observation_type toGoal( const full_observation_type & o )
+  {
+    return o.block( 0, N, 1, FULL_N - N );
   }
 };
 

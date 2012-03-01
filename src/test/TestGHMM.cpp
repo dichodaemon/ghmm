@@ -12,9 +12,12 @@ SUITE( GHMM ) {
   TEST( Defaults )
   {
     typedef ghmm::GHMM<float, 2, 4> GHMMType;
-    GHMMType::matrix_type sigma;
-    sigma << 1.0, 0.0, 
+    GHMMType::observation_matrix_type observationSigma;
+    observationSigma << 1.0, 0.0, 
            0.0, 1.0;
+    GHMMType::goal_matrix_type goalSigma;
+    goalSigma << 4.0, 0.0,
+                 0.0, 4.0;
     GHMMType::full_matrix_type fullSigma;
     fullSigma << 1.0, 0.0, 0.0, 0.0,
                  0.0, 1.0, 0.0, 0.0,
@@ -22,7 +25,8 @@ SUITE( GHMM ) {
                  0.0, 0.0, 0.0, 4.0;
     GHMMType ghmm( 
       fullSigma, 
-      sigma,
+      observationSigma,
+      goalSigma,
       1, 0.01,
       0.001, 0.001
     );
@@ -41,9 +45,12 @@ SUITE( GHMM ) {
   TEST( Track )
   {
     typedef ghmm::GHMM<float, 2, 4> GHMMType;
-    GHMMType::matrix_type sigma;
-    sigma << 1.0, 0.0, 
-           0.0, 1.0;
+    GHMMType::observation_matrix_type observationSigma;
+    observationSigma << 1.0, 0.0, 
+                        0.0, 1.0;
+    GHMMType::goal_matrix_type goalSigma;
+    goalSigma << 4.0, 0.0,
+                 0.0, 4.0;
     GHMMType::full_matrix_type fullSigma;
     fullSigma << 1.0, 0.0, 0.0, 0.0,
                  0.0, 1.0, 0.0, 0.0,
@@ -51,7 +58,8 @@ SUITE( GHMM ) {
                  0.0, 0.0, 0.0, 4.0;
     GHMMType ghmm( 
       fullSigma, 
-      sigma,
+      observationSigma,
+      goalSigma,
       1, 0.01,
       0.001, 0.001
     );
@@ -71,10 +79,12 @@ SUITE( GHMM ) {
 
     for ( int i = 0; i < 100; ++i ) {
       GHMMType::observation_type o;
+      GHMMType::goal_type goal;
       o << i / 10.0, 0.0;
       ghmm.update( g2, o );
       ghmm.predict( g2, 20 );
       ghmm.observationPdf( g2, 20, o );
+      ghmm.goalPdf( g2, 20, goal );
     }
   }
 }

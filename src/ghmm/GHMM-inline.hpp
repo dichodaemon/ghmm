@@ -1,12 +1,14 @@
 template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
 GHMM<T, N, FULL_N, GHMM_TRAITS>::GHMM(
   full_matrix_type fullSigma, 
-  matrix_type sigma, 
+  observation_matrix_type observationSigma, 
+  goal_matrix_type goalSigma, 
   value_type insertionDistance, 
   value_type epsilon,
   value_type statePrior,
   value_type transitionPrior
-) : sigma_( sigma ),
+) : observationSigma_( observationSigma ),
+    goalSigma_( goalSigma ),
     statePrior_( statePrior ),
     transitionPrior_( transitionPrior ),
     graph_(),
@@ -16,7 +18,8 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::GHMM(
       insertionDistance, 
       epsilon 
     ), 
-    gaussian_( sigma ),
+    observationGaussian_( observationSigma ),
+    goalGaussian_( goalSigma ),
     trajectoryCount_( 0 )
 {}
 
@@ -316,7 +319,18 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
   const node_type & n
 ) const
 {
-  value_type result = gaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
+  value_type result = observationGaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
+  return result;
+}
+
+template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
+typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type
+GHMM<T, N, FULL_N, GHMM_TRAITS>::goalProbability(
+  const goal_type & g,
+  const node_type & n
+) const
+{
+  value_type result = observationGaussian_( g, GHMM_TRAITS::toGoal( graph_[n].centroid ) );
   return result;
 }
 
@@ -442,6 +456,29 @@ typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type
         n != nodeEnd; ++n
   ) {
     result += graph[*n].estimations[t] * observationProbability( o, *n ) + 1E-40;
+    beliefTotal += graph[*n].estimations[t];
+  }
+  assert( result == result );
+  assert( result  > 0 );
+  return result;
+}
+
+template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
+typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type 
+  GHMM<T, N, FULL_N, GHMM_TRAITS>::goalPdf(
+  const graph_type & graph, 
+  uint32_t t, 
+  const goal_type & g 
+) const 
+{
+  value_type result = 1E-40;
+  value_type beliefTotal = 0;
+  typename itm_type::node_iterator n;
+  typename itm_type::node_iterator nodeEnd;
+  for ( boost::tie( n, nodeEnd ) = boost::vertices( graph );
+        n != nodeEnd; ++n
+  ) {
+    result += graph[*n].estimations[t] * goalProbability( g, *n ) + 1E-40;
     beliefTotal += graph[*n].estimations[t];
   }
   assert( result == result );
