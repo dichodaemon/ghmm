@@ -54,7 +54,6 @@ public:
 
   value_type goalPdf( 
     const graph_type & graph, 
-    uint32_t t, 
     const goal_type & g 
   ) const;
 

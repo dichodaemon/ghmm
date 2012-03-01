@@ -84,7 +84,7 @@ SUITE( GHMM ) {
       ghmm.update( g2, o );
       ghmm.predict( g2, 20 );
       ghmm.observationPdf( g2, 20, o );
-      ghmm.goalPdf( g2, 20, goal );
+      ghmm.goalPdf( g2, goal );
     }
   }
 }

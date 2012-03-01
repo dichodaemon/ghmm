@@ -467,7 +467,6 @@ template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
 typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type 
   GHMM<T, N, FULL_N, GHMM_TRAITS>::goalPdf(
   const graph_type & graph, 
-  uint32_t t, 
   const goal_type & g 
 ) const 
 {
@@ -478,8 +477,8 @@ typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph );
         n != nodeEnd; ++n
   ) {
-    result += graph[*n].estimations[t] * goalProbability( g, *n ) + 1E-40;
-    beliefTotal += graph[*n].estimations[t];
+    result += graph[*n].estimations[0] * goalProbability( g, *n ) + 1E-40;
+    beliefTotal += graph[*n].estimations[0];
   }
   assert( result == result );
   assert( result  > 0 );
