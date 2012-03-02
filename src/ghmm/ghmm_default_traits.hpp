@@ -29,6 +29,7 @@ public:
   typedef typename std::vector< value_type > estimations_type;
 
   struct node_data_type {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     node_data_type() : prior( 0 ){};
     full_observation_type centroid;
     value_type oldPrior;
