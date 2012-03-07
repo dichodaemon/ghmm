@@ -77,16 +77,15 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::normalize()
           child != childEnd; ++child
     ) {
       if ( graph_[*child].value < transitionPrior_ ) {
-        graph_[*child].value = transitionPrior_;
+        graph_[*child].valueSum = transitionPrior_;
       }
-      transitionSum += graph_[*child].value;
+      transitionSum += graph_[*child].valueSum;
     }
 
     for ( boost::tie( child, childEnd ) = boost::out_edges( *n, graph_ );
           child != childEnd; ++child
     ) {
-      graph_[*child].value /= transitionSum;
-      graph_[*child].oldValue = graph_[*child].value;
+      graph_[*child].value = graph_[*child].valueSum / transitionSum;
     }
   }
 
@@ -255,17 +254,24 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
 
       value_type tmp = 0;
       uint32_t t = 1;
+      value_type denominator = 0;
       for ( IT o = begin; o != end; ++o, ++t ) {
         tmp +=   n1Info.alpha[t - 1] 
-               * edgeInfo.oldValue
+               * edgeInfo.value
                * observationProbability( *o, n2 ) 
                * n2Info.beta[t];
+        denominator += n1Info.alpha[t - 1] * n1Info.beta[t - 1];
       }
+      tmp = tmp / denominator;
       if ( tmp < 1E-40 ) {
         tmp = 1E-40;
       }
-      edgeInfo.value = tmp;
-      assert( tmp == tmp );
+      if ( tmp == tmp ) {
+        edgeInfo.valueSum += tmp;
+      } else {
+        edgeInfo.valueSum += 0;
+      }
+      assert( edgeInfo.valueSum == edgeInfo.valueSum );
     }
   }
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph_ );
@@ -277,7 +283,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     for ( boost::tie( childEdge, childEdgeEnd ) = boost::out_edges( *n, graph_ ); 
           childEdge != childEdgeEnd; ++childEdge
     ) {
-      tmp += graph_[*childEdge].value;
+      tmp += graph_[*childEdge].valueSum;
     }
 
     assert( tmp == tmp );
@@ -288,23 +294,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
           childEdge != childEdgeEnd; ++childEdge
     ) {
       typename GHMM_TRAITS::edge_data_type & edgeInfo = graph_[*childEdge];
-      edgeInfo.value /= tmp;
-      edgeInfo.value =   (   edgeInfo.oldValue * ( trajectoryCount_ - 1 ) 
-                           + edgeInfo.value )
-                       / trajectoryCount_;
-
-    }
-    // Renormalize TODO: this seems inefficient, is there a cleaner way?
-    tmp = 0;
-    for ( boost::tie( childEdge, childEdgeEnd ) = boost::out_edges( *n, graph_ ); 
-          childEdge != childEdgeEnd; ++childEdge
-    ) {
-      tmp += graph_[*childEdge].value;
-    }
-    for ( boost::tie( childEdge, childEdgeEnd ) = boost::out_edges( *n, graph_ ); 
-          childEdge != childEdgeEnd; ++childEdge
-    ) {
-      graph_[*childEdge].value /= tmp;
+      edgeInfo.value = edgeInfo.valueSum / tmp;    
     }
     n1Info.prior =   (   n1Info.oldPrior * ( trajectoryCount_ - 1) 
                        + n1Info.prior ) 

@@ -42,7 +42,7 @@ public:
 
   struct edge_data_type {
     edge_data_type() : value( 0 ){};
-    value_type oldValue;
+    value_type valueSum;
     value_type value;
   };
 
