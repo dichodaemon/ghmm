@@ -1,3 +1,11 @@
+#ifndef EIGEN_DONT_VECTORIZE
+#define EIGEN_DONT_VECTORIZE 1
+#endif
+
+#ifndef EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT 1
+#endif
+
 #include <iostream>
 #include <ghmm/GHMM.hpp>
 #include <unittest++/UnitTest++.h>
@@ -32,7 +40,7 @@ SUITE( GHMM ) {
     );
 
     for ( int i = 0; i < 100; ++i ) {
-      std::vector< GHMMType::full_observation_type> trajectory;
+      std::vector< GHMMType::full_observation_type, Eigen::aligned_allocator<GHMMType::full_observation_type> > trajectory;
       for ( int j = 0; j < 100; ++j ) {
         GHMMType::full_observation_type o;
         o << j / 10.0, i / 10.0, i / 100.0, j / 100.0;

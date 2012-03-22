@@ -2,6 +2,15 @@
 #define GHMM_GHMM_DEFAULT_TRAITS_HPP_
 
 
+#ifndef EIGEN_DONT_VECTORIZE
+#define EIGEN_DONT_VECTORIZE
+#endif
+
+#ifndef EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#endif
+
+
 #include <ghmm/ITM.hpp>
 #include <ghmm/itm_eigen_traits.hpp>
 #include <ghmm/Mahalanobis.hpp>
@@ -9,6 +18,20 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <boost/graph/adjacency_list.hpp>
+#include <vector>
+
+
+//TODO: get this to work
+namespace boost
+{
+  struct eigen_vecS{};
+
+  template <class T>
+  struct container_gen< eigen_vecS, T >
+  {
+    typedef std::vector< T, Eigen::aligned_allocator< T > > type;
+  };
+}
 
 
 namespace ghmm
@@ -29,7 +52,6 @@ public:
   typedef typename std::vector< value_type > estimations_type;
 
   struct node_data_type {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     node_data_type() : prior( 0 ){};
     full_observation_type centroid;
     value_type oldPrior;
@@ -38,6 +60,7 @@ public:
     value_type belief;
     std::vector<value_type> alpha;
     std::vector<value_type> beta;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   };
 
   struct edge_data_type {

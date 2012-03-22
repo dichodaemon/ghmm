@@ -38,7 +38,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::learn( IT begin, IT end )
   IT fullO;
   for ( fullO = begin; fullO != end; ++fullO ) {
     observation_type o;
-    for ( uint32_t i = 0; i < o.size(); ++i ) {
+    for ( int i = 0; i < o.size(); ++i ) {
       o[i] = (*fullO)[i];
     }
     observations.push_back( o );

@@ -2,6 +2,15 @@
 #define GHMM_ITM_EIGEN_TRAITS_H_
 
 
+#ifndef EIGEN_DONT_VECTORIZE
+#define EIGEN_DONT_VECTORIZE
+#endif
+
+#ifndef EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#endif
+
+
 #include "Mahalanobis.hpp"
 #include <eigen3/Eigen/Core>
 #include <boost/graph/graph_traits.hpp>
