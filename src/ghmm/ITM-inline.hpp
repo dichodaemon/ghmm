@@ -118,7 +118,7 @@ ITM<ITM_TRAITS>::handleDeletions( node_type best, node_type second )
     // The or condition is to handle self-edges
     if (   iChild == eChild  
         || (    std::distance( iChild, eChild ) == 1 
-             && boost::target( *iChild, graph_ ) == best )
+             && boost::target( *iChild, graph_ ) == *iErase )
     ) {
       boost::clear_vertex( *iErase, graph_ );
       boost::remove_vertex( *iErase, graph_ );
@@ -134,7 +134,8 @@ ITM<ITM_TRAITS>::handleInsertions( const observation_type & o, node_type best, n
   observation_type & secondCentroid = graph_[second].centroid;
   observation_type center = ( bestCentroid + secondCentroid ) * 0.5;
 
-  if (    distance_( center, secondCentroid ) < distance_( center, o ) 
+  if (    (    distance_( center, secondCentroid ) < distance_( center, o ) 
+            || distance_( secondCentroid, o ) > 3 * insertionDistance_  )
        && distance_( bestCentroid, o ) > insertionDistance_ 
   ) {
     node_type r = boost::add_vertex( graph_ );
@@ -142,17 +143,20 @@ ITM<ITM_TRAITS>::handleInsertions( const observation_type & o, node_type best, n
     assert( best != r );
     boost::add_edge( best, r, graph_ );
     boost::add_edge( r, best, graph_ );
-
-
-    //if (    lastInserted_ != none_ 
-         //&& r != lastInserted_
-         //&& distance_( o, graph_[lastInserted_].centroid ) < insertionDistance_  * 2
-    //) {
-      //assert( lastInserted_ != r );
-      //boost::add_edge( r, lastInserted_, graph_ );
-      //boost::add_edge( lastInserted_, r, graph_);
-    //}
-    //lastInserted_ = r;
+    if (  lastInserted_ != none_ 
+         && r != lastInserted_
+    ) {
+      boost::add_edge( r, lastInserted_, graph_ );
+      boost::add_edge( lastInserted_, r, graph_);
+      lastInserted_ = r;
+    }
+  } else if (  lastInserted_ != none_ 
+       && best != lastInserted_
+       //&& distance_( o, graph_[lastInserted_].centroid ) < insertionDistance_  * 3
+  ) {
+    boost::add_edge( best, lastInserted_, graph_ );
+    boost::add_edge( lastInserted_, best, graph_);
+    lastInserted_ = best;
   }
   if ( distance_( bestCentroid, secondCentroid ) < 0.5 * insertionDistance_ ) {
     boost::clear_vertex( second, graph_ );

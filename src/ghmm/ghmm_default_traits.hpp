@@ -52,10 +52,10 @@ public:
   typedef typename std::vector< value_type > estimations_type;
 
   struct node_data_type {
-    node_data_type() : prior( 0 ){};
+    node_data_type() : probability( 0 ){};
     full_observation_type centroid;
-    value_type oldPrior;
-    value_type prior;
+    value_type probability;
+    value_type probabilitySum;
     estimations_type estimations;
     value_type belief;
     std::vector<value_type> alpha;
@@ -64,9 +64,10 @@ public:
   };
 
   struct edge_data_type {
-    edge_data_type() : value( 0 ){};
-    value_type valueSum;
-    value_type value;
+    edge_data_type() : probability( 0 ){};
+    value_type probability;
+    value_type numeratorSum;
+    value_type denominatorSum;
   };
 
   typedef typename boost::adjacency_list< 
