@@ -301,7 +301,6 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
   const node_type & n
 ) const
 {
-  std::cerr << "observation: " << o << ", *n:" << graph_[n].centroid << std::endl;
   value_type result = observationGaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
   return result;
 }
@@ -345,6 +344,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::update(
       node_type parent = boost::source( *parentEdge, graph );
       assert( graph[parent].belief == graph[parent].belief );
       assert( graph[*parentEdge].probability == graph[*parentEdge].probability );
+      std::cerr << "observation: " << o << ", *n:" << graph_[*n].centroid << std::endl;
       assert( observationProbability( o, *n ) == observationProbability( o, *n ) );
       value_type tmp =   graph[parent].belief 
                        * graph[*parentEdge].probability 
