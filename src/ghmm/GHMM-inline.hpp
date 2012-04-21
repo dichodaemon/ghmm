@@ -301,6 +301,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
   const node_type & n
 ) const
 {
+  std::cerr << "observation: " << o << ", *n:" << graph_[n].centroid << std::endl;
   value_type result = observationGaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
   return result;
 }
