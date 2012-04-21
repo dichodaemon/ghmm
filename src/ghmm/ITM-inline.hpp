@@ -25,6 +25,7 @@ ITM<ITM_TRAITS>::operator()( const observation_type & o )
   if ( best == none_ ) {
     node_type n = boost::add_vertex( graph_ );
     graph_[n].centroid = o;
+    std::cerr << "Add vertex: " << graph_[n].centroid << std::endl;
     return;
   }
 
@@ -33,6 +34,7 @@ ITM<ITM_TRAITS>::operator()( const observation_type & o )
       second = best;
       best = boost::add_vertex( graph_ );
       graph_[best].centroid = o;
+      std::cerr << "Add vertex: " << graph_[best].centroid << std::endl;
     } else {
       return;
     }
@@ -144,6 +146,7 @@ ITM<ITM_TRAITS>::handleInsertions( const observation_type & o, node_type best, n
   ) {
     node_type r = boost::add_vertex( graph_ );
     graph_[r].centroid = o;
+    std::cerr << "Add vertex: " << graph_[r].centroid << std::endl;
     assert( best != r );
     boost::add_edge( best, r, graph_ );
     boost::add_edge( r, best, graph_ );
