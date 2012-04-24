@@ -278,6 +278,10 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     ) {
       graph_[*childEdge].probability = graph_[*childEdge].numeratorSum / graph_[*childEdge].denominatorSum;
       tmp += graph_[*childEdge].probability;
+      if ( tmp == tmp ) {
+      } else {
+        std::cerr << graph_[*childEdge].numeratorSum << "/" << graph_[*childEdge].denominatorSum << std::endl;
+      }
     }
 
     assert( tmp == tmp );

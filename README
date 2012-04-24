@@ -1,4 +1,20 @@
-This project requires SimpleCMake. If it is not installed at the default path,
-you should invoke CMake as follows:
+Description
+===========
 
-cmake <ROOT_DIR> -DCMAKE_MODULE_PATH:PATH=<SIMPLE_CMAKE_DIR>
+This is a rewrite of our GHMM software, the original version, which
+includes a GUI and some examples is available at:
+
+  * http://www.dizanvasquez.info/software:ghmm
+
+Dependencies
+------------
+
+  * Eigen3 linear algebra library.
+  * UnitTest++ unit test library.
+
+Compiling
+---------
+
+  * Just do it the standard way "mkdir build && cd build && cmake .. && make"
+
+
