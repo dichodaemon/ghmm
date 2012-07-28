@@ -313,7 +313,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
 ) const
 {
   value_type result = observationGaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
-  return result;
+  return result + 1E-40;
 }
 
 template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
@@ -324,7 +324,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
 ) const
 {
   value_type result = fullGaussian_( o, graph_[n].centroid );
-  return result;
+  return result + 1E-40;
 }
 
 template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
