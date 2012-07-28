@@ -146,6 +146,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeForward( IT begin, IT end )
                          * observationProbability( *o, *n );
         n1Info.alpha[t] += tmp;
       }
+      assert( n1Info.alpha[t] == n1Info.alpha[t] );
       if ( n1Info.alpha[t] < 1E-40 ) {
         n1Info.alpha[t] = 1E-40;
       }
