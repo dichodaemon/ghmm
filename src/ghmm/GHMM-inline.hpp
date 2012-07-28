@@ -67,7 +67,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::normalize()
     for ( boost::tie( child, childEnd ) = boost::out_edges( *n, graph_ ); 
           child != childEnd; ++child
     ) {
-      if ( graph_[*child].numeratorSum < transitionPrior_ ) {
+      if ( graph_[*child].numeratorSum < transitionPrior_ || graph_[*child].denominatorSum < transitionPrior_ ) {
         graph_[*child].numeratorSum = transitionPrior_;
         graph_[*child].denominatorSum = transitionPrior_;
       }
