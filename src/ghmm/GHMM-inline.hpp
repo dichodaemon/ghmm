@@ -256,6 +256,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
       }
       edgeInfo.numeratorSum += numerator;
       edgeInfo.denominatorSum += denominator;
+      std::cerr << edgeInfo.numeratorSum << ", " << edgeInfo.denominatorSum << std::endl;
     }
   }
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph_ );
@@ -276,8 +277,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     }
 
     assert( tmp == tmp );
-    // TODO: Check this
-    //assert( tmp > 0 );
+    assert( tmp > 0 );
 
     // Normalize and average with old probabilities
     for ( boost::tie( childEdge, childEdgeEnd ) = boost::out_edges( *n, graph_ ); 
