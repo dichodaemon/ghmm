@@ -16,3 +16,4 @@ target_link_libraries( unit_tests unittest++ )
 
 add_test( unit_tests ${EXECUTABLE_OUTPUT_PATH}/unit_tests xml )
 
+add_executable( simple sandbox/simple.cpp )

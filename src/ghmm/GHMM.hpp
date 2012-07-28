@@ -23,6 +23,7 @@ public:
   typedef typename GHMM_TRAITS::distance_type distance_type;
   typedef typename GHMM_TRAITS::observation_gaussian_type observation_gaussian_type;
   typedef typename GHMM_TRAITS::goal_gaussian_type goal_gaussian_type;
+  typedef typename GHMM_TRAITS::full_gaussian_type full_gaussian_type;
   typedef typename GHMM_TRAITS::full_matrix_type full_matrix_type;
   typedef typename GHMM_TRAITS::observation_matrix_type observation_matrix_type;
   typedef typename GHMM_TRAITS::goal_matrix_type goal_matrix_type;
@@ -66,12 +67,14 @@ private:
 
   observation_matrix_type   observationSigma_;
   goal_matrix_type          goalSigma_;
+  full_matrix_type          fullSigma_;
   value_type                statePrior_;
   value_type                transitionPrior_;
   graph_type                graph_;
   itm_type                  itm_;
   observation_gaussian_type observationGaussian_;
   goal_gaussian_type        goalGaussian_;
+  full_gaussian_type        fullGaussian_;
   uint32_t                  trajectoryCount_;
 
   value_array factors_;
@@ -89,6 +92,11 @@ private:
 
   value_type observationProbability( 
     const observation_type & o, 
+    const node_type & n 
+  ) const;
+
+  value_type observationProbability( 
+    const full_observation_type & o, 
     const node_type & n 
   ) const;
 

@@ -93,6 +93,10 @@ public:
       value_type, 
       goal_matrix_type, 
       goal_type > goal_gaussian_type;
+  typedef typename ghmm::Gaussian<
+      value_type, 
+      full_matrix_type, 
+      full_observation_type > full_gaussian_type;
   static observation_type toObservation( const full_observation_type & o )
   {
     return o.block( 0, 0, 1, N );

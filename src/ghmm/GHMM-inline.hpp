@@ -20,6 +20,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::GHMM(
     ), 
     observationGaussian_( observationSigma ),
     goalGaussian_( goalSigma ),
+    fullGaussian_( fullSigma ),
     trajectoryCount_( 0 )
 {}
 
@@ -34,19 +35,9 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::learn( IT begin, IT end )
   }
   normalize();
 
-  std::vector<observation_type> observations;
-  IT fullO;
-  for ( fullO = begin; fullO != end; ++fullO ) {
-    observation_type o;
-    for ( int i = 0; i < o.size(); ++i ) {
-      o[i] = (*fullO)[i];
-    }
-    observations.push_back( o );
-  }
-
-  computeForward( observations.begin(), observations.end() );
-  computeBackwards( observations.rbegin(), observations.rend() );
-  updateParameters( observations.begin(), observations.end() );
+  computeForward( begin, end );
+  computeBackwards( std::reverse_iterator<IT>( end ), std::reverse_iterator<IT>( begin ) );
+  updateParameters( begin, end );
 }
 
 template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
@@ -306,6 +297,17 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
 ) const
 {
   value_type result = observationGaussian_( o, GHMM_TRAITS::toObservation( graph_[n].centroid ) );
+  return result;
+}
+
+template < typename T, int N, int FULL_N,  typename GHMM_TRAITS >
+typename GHMM<T, N, FULL_N, GHMM_TRAITS>::value_type
+GHMM<T, N, FULL_N, GHMM_TRAITS>::observationProbability(
+  const full_observation_type & o,
+  const node_type & n
+) const
+{
+  value_type result = fullGaussian_( o, graph_[n].centroid );
   return result;
 }
 
