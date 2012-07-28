@@ -259,6 +259,15 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
                      * observationProbability( *o, n2 ) 
                      * n2Info.beta[t];
         denominator += n1Info.alpha[t - 1] * n1Info.beta[t - 1] * factors_[t - 1];
+        std::cerr << "-----\n";
+        std::cerr << n1Info.centroid << std::endl;
+        std::cerr << n2Info.centroid << std::endl;
+        std::cerr << "n1Info.alpha[t - 1]:" << n1Info.alpha[t - 1] << std::endl;
+        std::cerr << "edgeInfo.probability:" << edgeInfo.probability << std::endl;
+        std::cerr << "observationProbability( *o, n2 ):" << observationProbability( *o, n2 ) << std::endl;
+        std::cerr << "n2Info.beta[t]:" << n2Info.beta[t] << std::endl;
+        std::cerr << "n1Info.beta[t - 1]:" << n1Info.beta[t - 1] << std::endl;
+        std::cerr << "factors_[t - 1]:" << factors_[t - 1] << std::endl;
       }
       edgeInfo.numeratorSum += numerator;
       edgeInfo.denominatorSum += denominator;
