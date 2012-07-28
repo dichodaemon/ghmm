@@ -145,6 +145,11 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeForward( IT begin, IT end )
                          * graph_[*parentEdge].probability 
                          * observationProbability( *o, *n );
         n1Info.alpha[t] += tmp;
+        std::cerr << n1Info.centroid << std::endl;
+        std::cerr << graph_[parent].centroid << std::endl;
+        std::cerr << "graph_[parent].alpha[t - 1]:" << graph_[parent].alpha[t - 1]  << std::endl;
+        std::cerr << "graph_[*parentEdge].probability:" << graph_[*parentEdge].probability << std::endl;
+        std::cerr << "observationProbability( *o, *n ):" << observationProbability( *o, *n ) << std::endl;
       }
       assert( n1Info.alpha[t] == n1Info.alpha[t] );
       if ( n1Info.alpha[t] < 1E-40 ) {
