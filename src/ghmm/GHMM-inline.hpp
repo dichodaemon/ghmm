@@ -145,11 +145,11 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::computeForward( IT begin, IT end )
                          * graph_[*parentEdge].probability 
                          * observationProbability( *o, *n );
         n1Info.alpha[t] += tmp;
-        std::cerr << n1Info.centroid << std::endl;
-        std::cerr << graph_[parent].centroid << std::endl;
-        std::cerr << "graph_[parent].alpha[t - 1]:" << graph_[parent].alpha[t - 1]  << std::endl;
-        std::cerr << "graph_[*parentEdge].probability:" << graph_[*parentEdge].probability << std::endl;
-        std::cerr << "observationProbability( *o, *n ):" << observationProbability( *o, *n ) << std::endl;
+        //std::cerr << n1Info.centroid << std::endl;
+        //std::cerr << graph_[parent].centroid << std::endl;
+        //std::cerr << "graph_[parent].alpha[t - 1]:" << graph_[parent].alpha[t - 1]  << std::endl;
+        //std::cerr << "graph_[*parentEdge].probability:" << graph_[*parentEdge].probability << std::endl;
+        //std::cerr << "observationProbability( *o, *n ):" << observationProbability( *o, *n ) << std::endl;
       }
       assert( n1Info.alpha[t] == n1Info.alpha[t] );
       if ( n1Info.alpha[t] < 1E-40 ) {
@@ -259,19 +259,19 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
                      * observationProbability( *o, n2 ) 
                      * n2Info.beta[t];
         denominator += n1Info.alpha[t - 1] * n1Info.beta[t - 1] * factors_[t - 1];
-        std::cerr << "-----\n";
-        std::cerr << n1Info.centroid << std::endl;
-        std::cerr << n2Info.centroid << std::endl;
-        std::cerr << "n1Info.alpha[t - 1]:" << n1Info.alpha[t - 1] << std::endl;
-        std::cerr << "edgeInfo.probability:" << edgeInfo.probability << std::endl;
-        std::cerr << "observationProbability( *o, n2 ):" << observationProbability( *o, n2 ) << std::endl;
-        std::cerr << "n2Info.beta[t]:" << n2Info.beta[t] << std::endl;
-        std::cerr << "n1Info.beta[t - 1]:" << n1Info.beta[t - 1] << std::endl;
-        std::cerr << "factors_[t - 1]:" << factors_[t - 1] << std::endl;
+        //std::cerr << "-----\n";
+        //std::cerr << n1Info.centroid << std::endl;
+        //std::cerr << n2Info.centroid << std::endl;
+        //std::cerr << "n1Info.alpha[t - 1]:" << n1Info.alpha[t - 1] << std::endl;
+        //std::cerr << "edgeInfo.probability:" << edgeInfo.probability << std::endl;
+        //std::cerr << "observationProbability( *o, n2 ):" << observationProbability( *o, n2 ) << std::endl;
+        //std::cerr << "n2Info.beta[t]:" << n2Info.beta[t] << std::endl;
+        //std::cerr << "n1Info.beta[t - 1]:" << n1Info.beta[t - 1] << std::endl;
+        //std::cerr << "factors_[t - 1]:" << factors_[t - 1] << std::endl;
       }
       edgeInfo.numeratorSum += numerator;
       edgeInfo.denominatorSum += denominator;
-      std::cerr << edgeInfo.numeratorSum << ", " << edgeInfo.denominatorSum << std::endl;
+      //std::cerr << edgeInfo.numeratorSum << ", " << edgeInfo.denominatorSum << std::endl;
     }
   }
   for ( boost::tie( n, nodeEnd ) = boost::vertices( graph_ );
@@ -287,7 +287,7 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
       tmp += graph_[*childEdge].probability;
       if ( tmp == tmp ) {
       } else {
-        std::cerr << graph_[*childEdge].numeratorSum << "/" << graph_[*childEdge].denominatorSum << std::endl;
+        //std::cerr << graph_[*childEdge].numeratorSum << "/" << graph_[*childEdge].denominatorSum << std::endl;
       }
     }
 
