@@ -276,7 +276,8 @@ GHMM<T, N, FULL_N, GHMM_TRAITS>::updateParameters( IT begin, IT end )
     }
 
     assert( tmp == tmp );
-    assert( tmp > 0 );
+    // TODO: Check this
+    //assert( tmp > 0 );
 
     // Normalize and average with old probabilities
     for ( boost::tie( childEdge, childEdgeEnd ) = boost::out_edges( *n, graph_ ); 
