@@ -6,6 +6,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <algorithm>
 #include <list>
+#include <iostream>
 
 
 namespace ghmm
